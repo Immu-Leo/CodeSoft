@@ -1,0 +1,135 @@
+import java.util.*;
+
+class Question {
+    private String questionText;
+    private List<String> options;
+    private int correctOptionIndex;
+
+    public Question(String questionText, List<String> options, int correctOptionIndex) {
+        this.questionText = questionText;
+        this.options = options;
+        this.correctOptionIndex = correctOptionIndex;
+    }
+
+    public String getQuestionText() {
+        return questionText;
+    }
+
+    public List<String> getOptions() {
+        return options;
+    }
+
+    public boolean isCorrectAnswer(int chosenIndex) {
+        return chosenIndex == correctOptionIndex;
+    }
+}
+
+class Quiz {
+    private List<Question> questions;
+    private int score;
+    private Map<Question, Boolean> questionResults;
+
+    public Quiz() {
+        this.questions = new ArrayList<>();
+        this.score = 0;
+        this.questionResults = new HashMap<>();
+    }
+
+    public void addQuestion(Question question) {
+        questions.add(question);
+    }
+
+    public void startQuiz() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Welcome to the Quiz!");
+
+        for (int i = 0; i < questions.size(); i++) {
+            Question question = questions.get(i);
+            System.out.println("\nQuestion " + (i + 1) + ": " + question.getQuestionText());
+
+            List<String> options = question.getOptions();
+            char optionLabel = 'A';
+            for (String option : options) {
+                System.out.println(optionLabel + ". " + option);
+                optionLabel++;
+            }
+
+            System.out.println("You have 10 seconds to answer...");
+            long startTime = System.currentTimeMillis();
+            String userInput = "";
+            boolean answeredInTime = false;
+
+            while ((System.currentTimeMillis() - startTime) < 10000) {
+                if (scanner.hasNext()) {
+                    userInput = scanner.next().trim().toUpperCase();
+                    answeredInTime = true;
+                    break;
+                }
+            }
+
+            if (!answeredInTime) {
+                System.out.println("Time's up! Moving to the next question.");
+                questionResults.put(question, false);
+            } else {
+                int chosenIndex = parseInput(userInput, options.size());
+                if (chosenIndex == -1) {
+                    System.out.println("Invalid input! Moving to the next question.");
+                    questionResults.put(question, false);
+                } else if (question.isCorrectAnswer(chosenIndex)) {
+                    System.out.println("Correct!");
+                    score++;
+                    questionResults.put(question, true);
+                } else {
+                    System.out.println("Incorrect!");
+                    questionResults.put(question, false);
+                }
+            }
+        }
+
+        displayResults();
+        scanner.close();
+    }
+
+    private int parseInput(String input, int optionCount) {
+        if (input.matches("\\d")) { // Number input
+            int number = Integer.parseInt(input);
+            if (number >= 1 && number <= optionCount) {
+                return number - 1;
+            }
+        } else if (input.matches("[A-D]")) { // Letter input
+            return input.charAt(0) - 'A';
+        }
+        return -1; // Invalid input
+    }
+
+    private void displayResults() {
+        System.out.println("\n--- Quiz Results ---");
+        System.out.println("Your final score: " + score + "/" + questions.size());
+        System.out.println("\nQuestion Summary:");
+
+        for (Map.Entry<Question, Boolean> entry : questionResults.entrySet()) {
+            Question question = entry.getKey();
+            boolean isCorrect = entry.getValue();
+            System.out.println("Q: " + question.getQuestionText());
+            System.out.println("Your answer: " + (isCorrect ? "Correct" : "Incorrect"));
+        }
+
+        System.out.println("\nThank you for participating in the quiz!");
+    }
+}
+
+public class quizz {
+    public static void main(String[] args) {
+        Quiz quiz = new Quiz();
+
+        // Sample questions
+        quiz.addQuestion(new Question("What is the capital of France?",
+                Arrays.asList("Berlin", "Madrid", "Paris", "Rome"), 2));
+        quiz.addQuestion(new Question("Which planet is known as the Red Planet?",
+                Arrays.asList("Earth", "Mars", "Jupiter", "Saturn"), 1));
+        quiz.addQuestion(new Question("Who wrote 'Romeo and Juliet'?",
+                Arrays.asList("Mark Twain", "Charles Dickens", "William Shakespeare", "Jane Austen"), 2));
+
+        quiz.startQuiz();
+    }
+}
