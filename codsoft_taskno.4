@@ -91,15 +91,15 @@ class Quiz {
     }
 
     private int parseInput(String input, int optionCount) {
-        if (input.matches("\\d")) { // Number input
+        if (input.matches("\\d")) {
             int number = Integer.parseInt(input);
             if (number >= 1 && number <= optionCount) {
                 return number - 1;
             }
-        } else if (input.matches("[A-D]")) { // Letter input
+        } else if (input.matches("[A-D]")) {
             return input.charAt(0) - 'A';
         }
-        return -1; // Invalid input
+        return -1;
     }
 
     private void displayResults() {
@@ -118,17 +118,20 @@ class Quiz {
     }
 }
 
-public class quizz {
+public class Quizz {
     public static void main(String[] args) {
         Quiz quiz = new Quiz();
 
-        // Sample questions
-        quiz.addQuestion(new Question("What is the capital of France?",
-                Arrays.asList("Berlin", "Madrid", "Paris", "Rome"), 2));
-        quiz.addQuestion(new Question("Which planet is known as the Red Planet?",
-                Arrays.asList("Earth", "Mars", "Jupiter", "Saturn"), 1));
-        quiz.addQuestion(new Question("Who wrote 'Romeo and Juliet'?",
-                Arrays.asList("Mark Twain", "Charles Dickens", "William Shakespeare", "Jane Austen"), 2));
+        quiz.addQuestion(new Question("What is the largest planet in our solar system?",
+                Arrays.asList("Earth", "Jupiter", "Saturn", "Mars"), 1));
+        quiz.addQuestion(new Question("Who invented the telephone?",
+                Arrays.asList("Alexander Graham Bell", "Thomas Edison", "Nikola Tesla", "Albert Einstein"), 0));
+        quiz.addQuestion(new Question("Which country is known as the Land of the Rising Sun?",
+                Arrays.asList("China", "Japan", "South Korea", "Thailand"), 1));
+        quiz.addQuestion(new Question("In which year did the Titanic sink?",
+                Arrays.asList("1912", "1905", "1920", "1898"), 0));
+        quiz.addQuestion(new Question("What is the chemical symbol for water?",
+                Arrays.asList("O2", "H2O", "CO2", "N2"), 1));
 
         quiz.startQuiz();
     }
